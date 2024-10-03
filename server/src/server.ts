@@ -1,3 +1,4 @@
+import path from "path";
 import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
@@ -17,6 +18,8 @@ const app: Express = express();
 // Set the application to trust the reverse proxy
 app.set("trust proxy", true);
 
+app.use(express.static(path.join(__dirname, "..", "public")));
+
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,8 +31,8 @@ app.use(rateLimiter);
 app.use(requestLogger);
 
 // Routes
-app.use("/health-check", healthCheckRouter);
-app.use("/users", userRouter);
+app.use("/api/health-check", healthCheckRouter);
+app.use("/api/users", userRouter);
 
 // Swagger UI
 app.use(openAPIRouter);

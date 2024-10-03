@@ -1,0 +1,17 @@
+{
+  "name": "sprinto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node scripts/postinstall.js",
+    "build": "node scripts/build.js",
+    "dev:server": "cd server && npm run dev",
+    "dev:website": "cd website && npm run dev",
+    "start": "cd server && npm run start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
