@@ -1,43 +1,47 @@
-import path from "path";
+import path from "node:path";
 import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
 import { pino } from "pino";
 
-import { openAPIRouter } from "@/api-docs/openAPIRouter";
+import { getGraphqlRouter } from "@/api/graphql/graphqlRouter";
 import { healthCheckRouter } from "@/api/healthCheck/healthCheckRouter";
-import { userRouter } from "@/api/user/userRouter";
 import errorHandler from "@/common/middleware/errorHandler";
 import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
 import { env } from "@/common/utils/envConfig";
 
 const logger = pino({ name: "server start" });
-const app: Express = express();
 
-// Set the application to trust the reverse proxy
-app.set("trust proxy", true);
+export const createApp = async () => {
+  const app: Express = express();
 
-app.use(express.static(path.join(__dirname, "..", "public")));
+  // Setup dependencies
+  const graphqlRouter = await getGraphqlRouter();
 
-// Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
-app.use(helmet());
-app.use(rateLimiter);
+  // Set the application to trust the reverse proxy
+  app.set("trust proxy", true);
 
-// Request logging
-app.use(requestLogger);
+  app.use(express.static(path.join(__dirname, "..", "public")));
 
-// Routes
-app.use("/api/health-check", healthCheckRouter);
-app.use("/api/users", userRouter);
+  // Middlewares
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+  app.use(helmet());
+  app.use(rateLimiter);
 
-// Swagger UI
-app.use(openAPIRouter);
+  // Request logging
+  app.use(requestLogger);
 
-// Error handlers
-app.use(errorHandler());
+  // Routes
+  app.use("/api/health-check", healthCheckRouter);
+  app.use("/api/graphql", graphqlRouter);
 
-export { app, logger };
+  // Error handlers
+  app.use(errorHandler());
+
+  return app;
+};
+
+export { logger };

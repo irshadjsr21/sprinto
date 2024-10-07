@@ -1,0 +1,11 @@
+const path = require('path');
+require('dotenv').config();
+
+console.log(process.env.POSTGRES_URL);
+
+module.exports = {
+  config: path.resolve('build', 'sql', 'config', 'config.json'),
+  'seeders-path': path.resolve('build', 'sql', 'seeders'),
+  'migrations-path': path.resolve('build', 'sql', 'migrations'),
+  'models-path': path.resolve('src', 'common', 'db', 'sql', 'models'),
+};
