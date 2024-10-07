@@ -9,7 +9,7 @@ const executeCommand = (command, directory) => {
   execSync(command, {
     stdio: "inherit",
     stderr: "inherit",
-    cwd: serverPath,
+    cwd: directory,
   });
 };
 
