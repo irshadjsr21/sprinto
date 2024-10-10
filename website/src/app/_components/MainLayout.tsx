@@ -1,8 +1,13 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import { Menu, Layout, Button, Drawer } from "antd";
-import { MenuOutlined, HomeOutlined, UserOutlined } from "@ant-design/icons";
+import { Menu, Layout, Button, Drawer, Flex } from "antd";
+import {
+  MenuOutlined,
+  HomeOutlined,
+  UserOutlined,
+  ArrowLeftOutlined,
+} from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { useRouter, usePathname } from "next/navigation";
@@ -21,13 +26,16 @@ export interface MainLayoutProps {
   children: React.ReactNode;
 }
 
+const pathToMenuKeyMap: Record<string, string | undefined> = {
+  "/": "home",
+  "/authors": "authors",
+};
+
 export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   const router = useRouter();
   const path = usePathname();
 
-  const [selectedItem, setSelectedItem] = useState(
-    path === "/" ? "home" : "authors"
-  );
+  const [selectedItem, setSelectedItem] = useState(pathToMenuKeyMap[path]);
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0
@@ -43,7 +51,7 @@ export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    setSelectedItem(path === "/" ? "home" : "authors");
+    setSelectedItem(pathToMenuKeyMap[path]);
   }, [path]);
 
   const isMobile = windowWidth < 768;
@@ -75,6 +83,10 @@ export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
 
   const onCloseMobileMenu = () => {
     setMobileMenuVisible(false);
+  };
+
+  const onBack = () => {
+    router.back();
   };
 
   return (
@@ -117,14 +129,9 @@ export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
                   theme="light"
                   mode="vertical"
                   items={menuItems}
-                  selectedKeys={[selectedItem]}
+                  selectedKeys={selectedItem ? [selectedItem] : []}
                   style={{ borderRight: "none" }}
                 />
-                {/* <div style={{ padding: "16px" }}> */}
-                {/*   <Button type="primary" block> */}
-                {/*     Login */}
-                {/*   </Button> */}
-                {/* </div> */}
               </Drawer>
             </>
           ) : (
@@ -136,15 +143,24 @@ export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
                   theme="dark"
                   mode="horizontal"
                   items={menuItems}
-                  selectedKeys={[selectedItem]}
+                  selectedKeys={selectedItem ? [selectedItem] : []}
                   style={{ flex: 1, justifyContent: "center" }}
                 />
               </div>
-              {/* <Button type="primary">Login</Button> */}
             </>
           )}
         </Header>
         <Content style={{ padding: "12px 48px", height: "100%" }}>
+          {selectedItem !== "home" && (
+            <Flex style={{ marginBottom: "16px" }}>
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<ArrowLeftOutlined />}
+                onClick={onBack}
+              />
+            </Flex>
+          )}
           {children}
         </Content>
       </Layout>

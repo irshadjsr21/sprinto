@@ -31,6 +31,26 @@ export class AuthorService {
   async getTotalCount(): Promise<number> {
     return Author.count();
   }
+
+  async delete(id: string): Promise<void> {
+    await Author.destroy({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async update(id: string, authorDetails: Partial<IAuthorCreation>): Promise<IAuthor> {
+    const authors = await Author.update(authorDetails, {
+      where: {
+        id,
+      },
+      returning: true,
+      limit: 1,
+    });
+
+    return authors[1][0];
+  }
 }
 
 export const authorService = new AuthorService();

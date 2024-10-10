@@ -1,18 +1,21 @@
 "use client";
 
-import { Spin, List, Typography, Flex, Card, Tag } from "antd";
+import { List, Typography, Flex, Card, Tag } from "antd";
 import { UserOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
 import { GET_AUTHORS } from "../_graphql";
-import { AddAuthor, MainLayout } from "../_components";
+import { AddOrEditAuthor, MainLayout, PageError, PageLoader } from "../_components";
+import { formatDate } from "../_utils";
+import { useRouter } from "next/navigation";
 
 interface PaginationParams {
   page: number;
   pageSize: number;
 }
 
-const HomePage: React.FC = () => {
+const AuthorsPage: React.FC = () => {
+  const router = useRouter();
   const [pagination, setPagination] = useState<PaginationParams>({
     page: 1,
     pageSize: 1,
@@ -26,24 +29,19 @@ const HomePage: React.FC = () => {
     setPagination({ page, pageSize });
   };
 
-  if (loading)
-    return (
-      <Flex justify="center" style={{ paddingTop: "80px" }}>
-        <Spin size="large" />
-      </Flex>
-    );
+  const onClick = (id?: string | null) => {
+    if (!id) return;
+    router.push(`/authors/single?id=${id}`);
+  };
 
-  if (error)
-    return (
-      <Flex justify="center" style={{ paddingTop: "80px" }}>
-        <Typography.Text type="danger">Error loading books</Typography.Text>
-      </Flex>
-    );
+  if (loading) return <PageLoader />;
+
+  if (error) return <PageError message="Error loading authors" />;
 
   return (
     <Flex vertical>
       <Flex justify="end" style={{ marginBottom: "16px" }}>
-        <AddAuthor onComplete={refetch} />
+        <AddOrEditAuthor onComplete={refetch} />
       </Flex>
       <List
         grid={{
@@ -68,7 +66,7 @@ const HomePage: React.FC = () => {
           align: "center",
         }}
         renderItem={(author) => (
-          <List.Item>
+          <List.Item onClick={() => onClick(author?.id)}>
             <Card
               hoverable
               title={
@@ -80,7 +78,7 @@ const HomePage: React.FC = () => {
             >
               <div>
                 <CalendarOutlined style={{ marginRight: 8 }} />
-                <Tag color="blue">{author?.bornDate}</Tag>
+                <Tag color="blue">{formatDate(author?.bornDate)}</Tag>
               </div>
             </Card>
           </List.Item>
@@ -90,10 +88,10 @@ const HomePage: React.FC = () => {
   );
 };
 
-const HomePageComponent: React.FC = () => (
+const AuthorsPageComponent: React.FC = () => (
   <MainLayout>
-    <HomePage />
+    <AuthorsPage />
   </MainLayout>
 );
 
-export default HomePageComponent;
+export default AuthorsPageComponent;

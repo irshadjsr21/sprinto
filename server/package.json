@@ -8,7 +8,7 @@
   "main": "index.ts",
   "private": true,
   "scripts": {
-    "dev": "tsx watch --clear-screen=false src/index.ts | pino-pretty",
+    "dev": "tsup src/index.ts --watch --onSuccess \"node dist/index.js | pino-pretty\" ",
     "build": "tsup",
     "start": "node dist/index.js",
     "clean": "rimraf dist coverage",

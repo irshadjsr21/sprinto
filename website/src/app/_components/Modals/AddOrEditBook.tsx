@@ -1,19 +1,36 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Modal } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { FormBuilder, FormBuilderRef, FormField } from "../FormBuilder";
 import { useMutation, useQuery } from "@apollo/client";
-import { ADD_BOOK, GET_AUTHORS } from "@/app/_graphql";
+import { ADD_BOOK, UPDATE_BOOK, GET_AUTHORS, GET_BOOKS } from "@/app/_graphql";
+import dayjs from "dayjs";
 
-export interface AddBookProps {
+export interface AddOrEditBookProps {
   onComplete: () => void;
+  book?: {
+    id?: string | null;
+    title?: string | null;
+    description?: string | null;
+    publishedDate?: string | null;
+    authorId?: string | null;
+  };
 }
 
-export const AddBook: React.FC<AddBookProps> = ({ onComplete }) => {
+export const AddOrEditBook: React.FC<AddOrEditBookProps> = ({
+  onComplete,
+  book,
+}) => {
   const [open, setOpen] = useState(false);
-  const formRef = React.createRef<FormBuilderRef>();
+  const formRef = useRef<FormBuilderRef>(null);
 
-  const [mutateFunction, { data, loading, error }] = useMutation(ADD_BOOK);
+  const [mutateFunction, { data, loading, error }] = useMutation(
+    book ? UPDATE_BOOK : ADD_BOOK,
+    {
+      refetchQueries: [GET_BOOKS],
+    }
+  );
+
   const { data: authorsData } = useQuery(GET_AUTHORS, {
     variables: {
       page: 1,
@@ -60,12 +77,16 @@ export const AddBook: React.FC<AddBookProps> = ({ onComplete }) => {
   };
 
   const handleOk = (values: any) => {
-    mutateFunction({
-      variables: {
-        ...values,
-        publishedDate: values.publishedDate?.toISOString(),
-      },
-    });
+    const variables = {
+      ...values,
+      publishedDate: values.publishedDate?.toISOString(),
+    };
+
+    if (book) {
+      mutateFunction({ variables: { id: book.id, ...variables } });
+    } else {
+      mutateFunction({ variables });
+    }
   };
 
   useEffect(() => {
@@ -81,11 +102,18 @@ export const AddBook: React.FC<AddBookProps> = ({ onComplete }) => {
 
   return (
     <>
-      <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-        Add Book
-      </Button>
+      {!book && (
+        <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+          Add Book
+        </Button>
+      )}
+      {book && (
+        <Button type="primary" icon={<EditOutlined />} onClick={showModal}>
+          Edit
+        </Button>
+      )}
       <Modal
-        title="Title"
+        title={book ? "Edit Book" : "Add Book"}
         open={open}
         onOk={() => formRef.current?.submit()}
         confirmLoading={loading}
@@ -95,6 +123,16 @@ export const AddBook: React.FC<AddBookProps> = ({ onComplete }) => {
           ref={formRef}
           formDetails={formDetails}
           onSubmit={handleOk}
+          initialValues={
+            book
+              ? {
+                  ...book,
+                  publishedDate: book.publishedDate
+                    ? dayjs(parseInt(book.publishedDate))
+                    : undefined,
+                }
+              : {}
+          }
         />
         {error && <p>{error.message}</p>}
       </Modal>

@@ -1,2 +1,4 @@
-export * from './AddAuthor';
-export * from './AddBook';
+export * from './AddOrEditAuthor';
+export * from './AddOrEditBook';
+export * from './DeleteBook';
+export * from './DeleteAuthor';

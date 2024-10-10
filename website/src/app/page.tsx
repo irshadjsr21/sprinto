@@ -1,15 +1,17 @@
 "use client";
 
-import { Spin, List, Card, Tag, Typography, Flex } from "antd";
+import { List, Card, Tag, Typography, Flex } from "antd";
 import {
   BookOutlined,
   UserOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
-import { AddBook, MainLayout } from "./_components";
+import { AddOrEditBook, MainLayout, PageError, PageLoader } from "./_components";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
 import { GET_BOOKS } from "./_graphql";
+import { useRouter } from "next/navigation";
+import { formatDate } from "./_utils";
 
 interface PaginationParams {
   page: number;
@@ -17,6 +19,7 @@ interface PaginationParams {
 }
 
 const HomePage: React.FC = () => {
+  const router = useRouter();
   const [pagination, setPagination] = useState<PaginationParams>({
     page: 1,
     pageSize: 1,
@@ -30,24 +33,20 @@ const HomePage: React.FC = () => {
     setPagination({ page, pageSize });
   };
 
-  if (loading)
-    return (
-      <Flex justify="center" style={{ paddingTop: "80px" }}>
-        <Spin size="large" />
-      </Flex>
-    );
+  const onClick = (id?: string) => {
+    if (!id) return;
 
-  if (error)
-    return (
-      <Flex justify="center" style={{ paddingTop: "80px" }}>
-        <Typography.Text type="danger">Error loading books</Typography.Text>
-      </Flex>
-    );
+    router.push(`/books/single?id=${id}`);
+  };
+
+  if (loading) return <PageLoader />;
+
+  if (error) return <PageError message="Error loading books" />;
 
   return (
     <Flex vertical>
       <Flex justify="end" style={{ marginBottom: "16px" }}>
-        <AddBook onComplete={refetch} />
+        <AddOrEditBook onComplete={refetch} />
       </Flex>
       <List
         grid={{
@@ -72,26 +71,26 @@ const HomePage: React.FC = () => {
           align: "center",
         }}
         renderItem={(book) => (
-          <List.Item>
+          <List.Item onClick={() => onClick(book.id ?? undefined)}>
             <Card
               hoverable
               title={
                 <Typography.Title level={4}>
                   <BookOutlined style={{ marginRight: 8 }} />
-                  {book?.title}
+                  {book.title}
                 </Typography.Title>
               }
             >
               <Typography.Paragraph ellipsis={{ rows: 3 }}>
-                {book?.description}
+                {book.description}
               </Typography.Paragraph>
               <div style={{ marginBottom: 12 }}>
                 <UserOutlined style={{ marginRight: 8 }} />
-                <Typography.Text strong>{book?.author?.name}</Typography.Text>
+                <Typography.Text strong>{book.author?.name}</Typography.Text>
               </div>
               <div>
                 <CalendarOutlined style={{ marginRight: 8 }} />
-                <Tag color="blue">{book?.publishedDate}</Tag>
+                <Tag color="blue">{formatDate(book.publishedDate)}</Tag>
               </div>
             </Card>
           </List.Item>

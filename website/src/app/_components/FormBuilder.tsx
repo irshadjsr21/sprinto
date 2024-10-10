@@ -22,15 +22,17 @@ export interface FormField {
 export interface FormBuilderProps {
   formDetails: FormField[];
   onSubmit: (values: Record<string, any>) => void;
+  initialValues?: Record<string, any>;
 }
 
 export interface FormBuilderRef {
   submit: () => void;
   reset: () => void;
+  setFieldsValue: (values: Record<string, any>) => void;
 }
 
 export const FormBuilder = forwardRef<FormBuilderRef, FormBuilderProps>(
-  function FormBuilderInternal({ formDetails, onSubmit }, ref) {
+  function FormBuilderInternal({ formDetails, onSubmit, initialValues }, ref) {
     const [form] = Form.useForm();
 
     const renderFormItem = (item: FormField) => {
@@ -108,12 +110,21 @@ export const FormBuilder = forwardRef<FormBuilderRef, FormBuilderProps>(
       onSubmit(values);
     };
 
-    React.useImperativeHandle(ref, () => ({
-      submit: () => {
-        form.submit();
-      },
-      reset: () => form.resetFields(),
-    }));
+    React.useImperativeHandle(
+      ref,
+      () => ({
+        submit: () => {
+          form.submit();
+        },
+        reset: () => {
+          form.resetFields();
+        },
+        setFieldsValue: (values: Record<string, any>) => {
+          form.setFieldsValue(values);
+        },
+      }),
+      [form]
+    );
 
     return (
       <Form
@@ -121,6 +132,7 @@ export const FormBuilder = forwardRef<FormBuilderRef, FormBuilderProps>(
         layout="vertical"
         onFinish={handleFinish}
         preserve={false}
+        initialValues={initialValues}
       >
         {formDetails.map((item) => renderFormItem(item))}
       </Form>

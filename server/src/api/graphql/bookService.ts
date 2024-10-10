@@ -30,6 +30,26 @@ export class BookService {
   async getTotalCount(): Promise<number> {
     return Book.count();
   }
+
+  async delete(id: string): Promise<void> {
+    await Book.destroy({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async update(id: string, bookDetails: Partial<IBookCreation>): Promise<IBook> {
+    const books = await Book.update(bookDetails, {
+      where: {
+        id,
+      },
+      returning: true,
+      limit: 1,
+    });
+
+    return books[1][0];
+  }
 }
 
 export const bookService = new BookService();

@@ -32,6 +32,10 @@ const resolvers: ApolloServerOptions<any>["resolvers"] = {
   Mutation: {
     addAuthor: async (_, params) => authorService.create(params),
     addBook: async (_, params) => bookService.create(params),
+    deleteAuthor: async (_, params) => authorService.delete(params.id),
+    deleteBook: async (_, params) => bookService.delete(params.id),
+    updateAuthor: async (_, { id, ...params }) => authorService.update(id, params),
+    updateBook: async (_, { id, ...params }) => bookService.update(id, params),
   },
 };
 

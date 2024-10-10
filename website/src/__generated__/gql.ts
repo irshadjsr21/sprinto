@@ -15,9 +15,15 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  query GetAuthors($page: Int, $pageSize: Int) {\n    authors(page: $page, pageSize: $pageSize) {\n      id\n      name\n      bornDate\n    }\n    totalAuthors\n  }\n": types.GetAuthorsDocument,
-    "\n  mutation AddAuthor($name: String!, $biography: String, $bornDate: String) {\n    addAuthor(name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n      name\n      bornDate\n    }\n  }\n": types.AddAuthorDocument,
+    "\n  mutation AddAuthor($name: String!, $biography: String, $bornDate: String) {\n    addAuthor(name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n    }\n  }\n": types.AddAuthorDocument,
+    "\n  mutation UpdateAuthor($id: String!, $name: String, $biography: String, $bornDate: String) {\n    updateAuthor(id: $id, name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n    }\n  }\n": types.UpdateAuthorDocument,
+    "\n  mutation DeleteAuthor($id: String!) {\n    deleteAuthor(id: $id) {\n      id\n    }\n  }\n": types.DeleteAuthorDocument,
+    "\n  query GetAuthor($id: String!) {\n    authors(id: $id) {\n      id\n      name\n      biography\n      bornDate\n    }\n  }\n": types.GetAuthorDocument,
     "\n  query GetBooks($page: Int, $pageSize: Int) {\n    books(page: $page, pageSize: $pageSize) {\n      id\n      title\n      description\n      publishedDate\n      author {\n        id\n        name\n      }\n    }\n    totalBooks\n  }\n": types.GetBooksDocument,
-    "\n  mutation AddBook($title: String!, $description: String, $publishedDate: String, $authorId: String) {\n    addBook(title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n      title\n      description\n      publishedDate\n    }\n  }\n": types.AddBookDocument,
+    "\n  mutation AddBook($title: String!, $description: String, $publishedDate: String, $authorId: String) {\n    addBook(title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n    }\n  }\n": types.AddBookDocument,
+    "\n  mutation UpdateBook($id: String!, $title: String, $description: String, $publishedDate: String, $authorId: String) {\n    updateBook(id: $id, title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n    }\n  }\n": types.UpdateBookDocument,
+    "\n  mutation DeleteBook($id: String!) {\n    deleteBook(id: $id) {\n      id\n    }\n  }\n": types.DeleteBookDocument,
+    "\n  query GetBook($id: String!) {\n    books(id: $id) {\n      id\n      title\n      description\n      publishedDate\n      authorId\n      author {\n        id\n        name\n        biography\n        bornDate\n      }\n    }\n  }\n": types.GetBookDocument,
 };
 
 /**
@@ -41,7 +47,19 @@ export function gql(source: "\n  query GetAuthors($page: Int, $pageSize: Int) {\
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation AddAuthor($name: String!, $biography: String, $bornDate: String) {\n    addAuthor(name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n      name\n      bornDate\n    }\n  }\n"): (typeof documents)["\n  mutation AddAuthor($name: String!, $biography: String, $bornDate: String) {\n    addAuthor(name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n      name\n      bornDate\n    }\n  }\n"];
+export function gql(source: "\n  mutation AddAuthor($name: String!, $biography: String, $bornDate: String) {\n    addAuthor(name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation AddAuthor($name: String!, $biography: String, $bornDate: String) {\n    addAuthor(name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation UpdateAuthor($id: String!, $name: String, $biography: String, $bornDate: String) {\n    updateAuthor(id: $id, name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateAuthor($id: String!, $name: String, $biography: String, $bornDate: String) {\n    updateAuthor(id: $id, name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation DeleteAuthor($id: String!) {\n    deleteAuthor(id: $id) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteAuthor($id: String!) {\n    deleteAuthor(id: $id) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetAuthor($id: String!) {\n    authors(id: $id) {\n      id\n      name\n      biography\n      bornDate\n    }\n  }\n"): (typeof documents)["\n  query GetAuthor($id: String!) {\n    authors(id: $id) {\n      id\n      name\n      biography\n      bornDate\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -49,7 +67,19 @@ export function gql(source: "\n  query GetBooks($page: Int, $pageSize: Int) {\n 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation AddBook($title: String!, $description: String, $publishedDate: String, $authorId: String) {\n    addBook(title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n      title\n      description\n      publishedDate\n    }\n  }\n"): (typeof documents)["\n  mutation AddBook($title: String!, $description: String, $publishedDate: String, $authorId: String) {\n    addBook(title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n      title\n      description\n      publishedDate\n    }\n  }\n"];
+export function gql(source: "\n  mutation AddBook($title: String!, $description: String, $publishedDate: String, $authorId: String) {\n    addBook(title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation AddBook($title: String!, $description: String, $publishedDate: String, $authorId: String) {\n    addBook(title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation UpdateBook($id: String!, $title: String, $description: String, $publishedDate: String, $authorId: String) {\n    updateBook(id: $id, title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateBook($id: String!, $title: String, $description: String, $publishedDate: String, $authorId: String) {\n    updateBook(id: $id, title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation DeleteBook($id: String!) {\n    deleteBook(id: $id) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteBook($id: String!) {\n    deleteBook(id: $id) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetBook($id: String!) {\n    books(id: $id) {\n      id\n      title\n      description\n      publishedDate\n      authorId\n      author {\n        id\n        name\n        biography\n        bornDate\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetBook($id: String!) {\n    books(id: $id) {\n      id\n      title\n      description\n      publishedDate\n      authorId\n      author {\n        id\n        name\n        biography\n        bornDate\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};
