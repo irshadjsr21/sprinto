@@ -2,14 +2,25 @@ import { Author, Book, type IBook, type IBookCreation } from "../../common/db";
 import { type IFilterParams, type IPaginationParams, serviceUtils } from "./serviceUtils";
 
 export interface IFindAllBooksParams extends IPaginationParams, IFilterParams {
+  id?: string;
+  authorId?: string;
   includeAuthor?: boolean;
+  title?: string;
 }
 
 export class BookService {
   async findAll(params: IFindAllBooksParams): Promise<IBook[]> {
     const books = await Book.findAll({
+      where: {
+        ...serviceUtils.createFilterQuery({
+          id: params.id,
+          authorId: params.authorId,
+        }),
+        ...serviceUtils.createFullTextSearchFilterQuery({
+          title: params.title,
+        }),
+      },
       ...serviceUtils.createPaginationQuery(params),
-      ...serviceUtils.createFilterQuery(params),
       ...(params.includeAuthor
         ? {
             include: {
@@ -27,8 +38,14 @@ export class BookService {
     return book;
   }
 
-  async getTotalCount(): Promise<number> {
-    return Book.count();
+  async getTotalCount(params?: { authorId?: string }): Promise<number> {
+    return Book.count({
+      where: params?.authorId
+        ? {
+            authorId: params.authorId,
+          }
+        : {},
+    });
   }
 
   async delete(id: string): Promise<void> {

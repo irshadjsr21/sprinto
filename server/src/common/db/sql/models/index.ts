@@ -6,12 +6,16 @@ const runAssosiations = () => {
     foreignKey: "id",
     sourceKey: "authorId",
     as: "author",
+    onDelete: "SET NULL",
+    onUpdate: "CASCADE",
   });
 
   Author.hasMany(Book, {
     foreignKey: "authorId",
     sourceKey: "id",
     as: "books",
+    onDelete: "SET NULL",
+    onUpdate: "CASCADE",
   });
 };
 

@@ -1,8 +1,8 @@
 import { gql } from "@/__generated__";
 
 export const GET_BOOKS = gql(`
-  query GetBooks($page: Int, $pageSize: Int) {
-    books(page: $page, pageSize: $pageSize) {
+  query GetBooks($page: Int, $pageSize: Int, $authorId: String, $title: String) {
+    books(page: $page, pageSize: $pageSize, authorId: $authorId, title: $title) {
       id
       title
       description
@@ -12,7 +12,7 @@ export const GET_BOOKS = gql(`
         name
       }
     }
-    totalBooks
+    totalBooks(authorId: $authorId)
   }
 `);
 
@@ -48,6 +48,7 @@ export const GET_BOOK_QUERY = gql(`
       description
       publishedDate
       authorId
+      rating
       author {
         id
         name

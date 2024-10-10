@@ -6,6 +6,7 @@ import { pino } from "pino";
 
 import { getGraphqlRouter } from "@/api/graphql/graphqlRouter";
 import { healthCheckRouter } from "@/api/healthCheck/healthCheckRouter";
+import { connectMongoDb, connectPostgress } from "@/common/db";
 import errorHandler from "@/common/middleware/errorHandler";
 import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
@@ -17,6 +18,8 @@ export const createApp = async () => {
   const app: Express = express();
 
   // Setup dependencies
+  await connectPostgress();
+  await connectMongoDb();
   const graphqlRouter = await getGraphqlRouter();
 
   // Set the application to trust the reverse proxy

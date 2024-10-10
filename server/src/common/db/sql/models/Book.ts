@@ -31,7 +31,7 @@ export const Book = sequelize.define<IBook>(
       allowNull: false,
     },
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     publishedDate: {
       type: DataTypes.DATE,

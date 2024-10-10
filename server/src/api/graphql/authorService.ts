@@ -1,15 +1,22 @@
-import { Author, Book, type IAuthor, type IAuthorCreation } from "../../common/db";
+import { Author, Book, type IAuthor, type IAuthorCreation, sequelize } from "../../common/db";
 import { type IFilterParams, type IPaginationParams, serviceUtils } from "./serviceUtils";
 
 export interface IFindAllAuthorParams extends IPaginationParams, IFilterParams {
   includeBooks?: boolean;
+  id?: string;
+  name?: string;
 }
 
 export class AuthorService {
   async findAll(params: IFindAllAuthorParams): Promise<IAuthor[]> {
     const authors = await Author.findAll({
+      where: {
+        ...serviceUtils.createFilterQuery({ id: params.id }),
+        ...serviceUtils.createFullTextSearchFilterQuery({
+          name: params.name,
+        }),
+      },
       ...serviceUtils.createPaginationQuery(params),
-      ...serviceUtils.createFilterQuery(params),
       ...serviceUtils.createIncludeQuery({
         includes: [
           {

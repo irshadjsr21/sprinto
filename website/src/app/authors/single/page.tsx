@@ -2,10 +2,12 @@
 
 import React, { Suspense } from "react";
 import { useQuery } from "@apollo/client";
-import { Card } from "antd";
+import { Button, Card, Descriptions, Flex, Typography } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import {
   AddOrEditAuthor,
+  BookList,
   MainLayout,
   PageError,
   PageLoader,
@@ -25,6 +27,10 @@ const AuthorDetails: React.FC = () => {
     router.push("/authors");
   };
 
+  const onBack = () => {
+    router.back();
+  };
+
   if (loading) return <PageLoader />;
 
   if (error) return <PageError message="Error loading author details" />;
@@ -33,25 +39,54 @@ const AuthorDetails: React.FC = () => {
   if (!author) return <PageError message="Author not found" />;
 
   return (
-    <Card
-      title={author.name}
-      bordered={true}
-      actions={[
-        <AddOrEditAuthor key="edit" author={author} onComplete={refetch} />,
-        <DeleteAuthor
-          key="delete"
-          id={author.id ?? ""}
-          onComplete={onDelete}
-        />,
-      ]}
-    >
-      <p>
-        <strong>Biography:</strong> {author?.biography}
-      </p>
-      <p>
-        <strong>Born Date:</strong> {formatDate(author?.bornDate)}
-      </p>
-    </Card>
+    <>
+      <Flex justify="start" style={{ marginBottom: "16px" }}>
+        <Button
+          type="primary"
+          shape="circle"
+          icon={<ArrowLeftOutlined />}
+          onClick={onBack}
+        />
+      </Flex>
+      <Flex justify="center" style={{ marginBottom: "16px" }}>
+        <Typography.Title level={2}>Author Details</Typography.Title>
+      </Flex>
+      <Card
+        title={author.name}
+        bordered={true}
+        style={{ marginBottom: "16px" }}
+        actions={[
+          <AddOrEditAuthor key="edit" author={author} onComplete={refetch} />,
+          <DeleteAuthor
+            key="delete"
+            id={author.id ?? ""}
+            onComplete={onDelete}
+          />,
+        ]}
+      >
+        <Descriptions
+          title="Author Details"
+          items={[
+            {
+              key: "name",
+              label: "Name",
+              children: author.name,
+            },
+            {
+              key: "biography",
+              label: "Biography",
+              children: author.biography,
+            },
+            {
+              key: "bornDate",
+              label: "Born Date",
+              children: formatDate(author.bornDate),
+            },
+          ]}
+        />
+      </Card>
+      <BookList authorId={author.id ?? ""} noBack />
+    </>
   );
 };
 

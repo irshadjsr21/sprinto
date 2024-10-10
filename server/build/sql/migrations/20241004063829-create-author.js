@@ -13,7 +13,7 @@ module.exports = {
         allowNull: false,
       },
       biography: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       bornDate: {
         type: Sequelize.DATE,

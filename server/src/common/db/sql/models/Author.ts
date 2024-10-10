@@ -30,7 +30,7 @@ export const Author = sequelize.define<IAuthor>(
       allowNull: false,
     },
     biography: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     bornDate: {
       type: DataTypes.DATE,

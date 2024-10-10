@@ -1,13 +1,8 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import { Menu, Layout, Button, Drawer, Flex } from "antd";
-import {
-  MenuOutlined,
-  HomeOutlined,
-  UserOutlined,
-  ArrowLeftOutlined,
-} from "@ant-design/icons";
+import { Menu, Layout, Button, Drawer } from "antd";
+import { MenuOutlined, HomeOutlined, UserOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { useRouter, usePathname } from "next/navigation";
@@ -85,10 +80,6 @@ export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
     setMobileMenuVisible(false);
   };
 
-  const onBack = () => {
-    router.back();
-  };
-
   return (
     <ApolloProvider client={client}>
       <Layout style={{ minHeight: "100vh" }}>
@@ -151,16 +142,6 @@ export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
           )}
         </Header>
         <Content style={{ padding: "12px 48px", height: "100%" }}>
-          {selectedItem !== "home" && (
-            <Flex style={{ marginBottom: "16px" }}>
-              <Button
-                type="primary"
-                shape="circle"
-                icon={<ArrowLeftOutlined />}
-                onClick={onBack}
-              />
-            </Flex>
-          )}
           {children}
         </Content>
       </Layout>

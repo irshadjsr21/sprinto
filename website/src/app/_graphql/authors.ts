@@ -1,8 +1,8 @@
 import { gql } from "@/__generated__";
 
 export const GET_AUTHORS = gql(`
-  query GetAuthors($page: Int, $pageSize: Int) {
-    authors(page: $page, pageSize: $pageSize) {
+  query GetAuthors($page: Int, $pageSize: Int, $name: String) {
+    authors(page: $page, pageSize: $pageSize, name: $name) {
       id
       name
       bornDate

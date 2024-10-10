@@ -1,13 +1,12 @@
-import type { ModelStatic } from "sequelize";
+import { type ModelStatic, Op } from "sequelize";
+import { sequelize } from "../../common/db";
 
 export interface IPaginationParams {
   pageSize?: number;
   page?: number;
 }
 
-export interface IFilterParams {
-  id?: string;
-}
+export type IFilterParams = Record<string, any>;
 
 export interface IIncludeParams {
   includes: {
@@ -25,15 +24,45 @@ export class ServiceUtils {
     };
   }
 
-  public createFilterQuery(params: IFilterParams) {
-    if (params.id) {
-      return {
-        where: {
-          id: params.id,
-        },
+  public createPaginationQueryForMongo({ pageSize = 10, page = 1 }: IPaginationParams) {
+    return {
+      limit: pageSize,
+      skip: (page - 1) * pageSize,
+    };
+  }
+
+  public createFilterQuery(filterOptions: IFilterParams) {
+    const params = structuredClone(filterOptions);
+
+    for (const key in params) {
+      if (params[key] === undefined || params[key] === null) {
+        delete params[key];
+      }
+    }
+
+    return {
+      ...params,
+    };
+  }
+
+  public createFullTextSearchFilterQuery(filterOptions: IFilterParams) {
+    const params = structuredClone(filterOptions);
+
+    for (const key in params) {
+      if (params[key] === undefined || params[key] === null) {
+        delete params[key];
+      }
+    }
+
+    const result: Record<string, any> = {};
+
+    for (const key in params) {
+      result[key] = {
+        [Op.iLike]: `%${params[key]}%`,
       };
     }
-    return {};
+
+    return result;
   }
 
   public createIncludeQuery(params: IIncludeParams) {

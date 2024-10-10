@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       description: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       publishedDate: {
         type: Sequelize.DATE,
@@ -25,6 +25,9 @@ module.exports = {
           model: "Authors",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,

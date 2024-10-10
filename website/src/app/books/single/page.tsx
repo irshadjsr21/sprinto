@@ -1,18 +1,21 @@
 "use client";
 
-import React, {Suspense} from "react";
+import React, { Suspense } from "react";
 import { useQuery } from "@apollo/client";
-import { Card } from "antd";
+import { Button, Card, Descriptions, Flex, Typography } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   AddOrEditBook,
+  DeleteBook,
   MainLayout,
   PageError,
   PageLoader,
+  ReviewList,
 } from "@/app/_components";
 import { formatDate } from "@/app/_utils";
 import { GET_BOOK_QUERY } from "@/app/_graphql";
-import { DeleteBook } from "@/app/_components/Modals/DeleteBook";
+import Link from "next/link";
 
 const BookDetails: React.FC = () => {
   const router = useRouter();
@@ -25,6 +28,10 @@ const BookDetails: React.FC = () => {
     router.push("/");
   };
 
+  const onBack = () => {
+    router.back();
+  };
+
   if (loading) return <PageLoader />;
 
   if (error) return <PageError message="Error loading book details" />;
@@ -33,34 +40,83 @@ const BookDetails: React.FC = () => {
   if (!book) return <PageError message="Book not found" />;
 
   return (
-    <Card
-      title={book.title}
-      bordered={true}
-      actions={[
-        <AddOrEditBook key="edit" book={book} onComplete={refetch} />,
-        <DeleteBook key="delete" id={book.id ?? ""} onComplete={onDelete} />,
-      ]}
-    >
-      <p>
-        <strong>Description:</strong> {book.description}
-      </p>
-      <p>
-        <strong>Published Date:</strong> {formatDate(book.publishedDate)}
-      </p>
-      <p>
-        <strong>Author Name:</strong> {book.author?.name}
-      </p>
-      <p>
-        <strong>Author Biography:</strong> {book.author?.biography}
-      </p>
-      <p>
-        <strong>Author Born Date:</strong> {formatDate(book.author?.bornDate)}
-      </p>
-    </Card>
+    <>
+      <Flex justify="start" style={{ marginBottom: "16px" }}>
+        <Button
+          type="primary"
+          shape="circle"
+          icon={<ArrowLeftOutlined />}
+          onClick={onBack}
+        />
+      </Flex>
+      <Flex justify="center" style={{ marginBottom: "16px" }}>
+        <Typography.Title level={2}>Book Details</Typography.Title>
+      </Flex>
+      <Card
+        title={book.title}
+        bordered={true}
+        style={{ marginBottom: "16px" }}
+        actions={[
+          <AddOrEditBook key="edit" book={book} onComplete={refetch} />,
+          <DeleteBook key="delete" id={book.id ?? ""} onComplete={onDelete} />,
+        ]}
+      >
+        <Descriptions
+          title="Book Details"
+          style={{ marginBottom: "16px" }}
+          items={[
+            {
+              key: "rating",
+              label: "Rating",
+              children: `${(book.rating ?? 0).toFixed(2)}/5`,
+            },
+            {
+              key: "description",
+              label: "Description",
+              children: book.description,
+            },
+            {
+              key: "publishedDate",
+              label: "Published Date",
+              children: formatDate(book.publishedDate),
+            },
+          ]}
+        />
+        {book.author && (
+          <Descriptions
+            title={
+              <Typography.Title level={5}>
+                <Link href={`/authors/single?id=${book.author?.id ?? ""}`}>
+                  Author
+                </Link>
+              </Typography.Title>
+            }
+            items={[
+              {
+                key: "name",
+                label: "Name",
+                children: book.author?.name,
+              },
+              {
+                key: "biography",
+                label: "Biography",
+                children: book.author?.biography,
+              },
+              {
+                key: "bornDate",
+                label: "Born Date",
+                children: formatDate(book.author?.bornDate),
+              },
+            ]}
+          />
+        )}
+      </Card>
+      <ReviewList bookId={book.id ?? ""} />
+    </>
   );
 };
 
-const BookDetailsComponent: React.FC = () => (
+const BookDetailsPage: React.FC = () => (
   <MainLayout>
     <Suspense>
       <BookDetails />
@@ -68,4 +124,4 @@ const BookDetailsComponent: React.FC = () => (
   </MainLayout>
 );
 
-export default BookDetailsComponent;
+export default BookDetailsPage;
