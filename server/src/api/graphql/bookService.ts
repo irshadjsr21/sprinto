@@ -26,6 +26,10 @@ export class BookService {
     const book = await Book.create(bookDetails);
     return book;
   }
+
+  async getTotalCount(): Promise<number> {
+    return Book.count();
+  }
 }
 
 export const bookService = new BookService();

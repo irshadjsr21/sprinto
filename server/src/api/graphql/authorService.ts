@@ -27,6 +27,10 @@ export class AuthorService {
     const author = await Author.create(authorDetails);
     return author;
   }
+
+  async getTotalCount(): Promise<number> {
+    return Author.count();
+  }
 }
 
 export const authorService = new AuthorService();

@@ -1,15 +1,11 @@
 "use client";
 
-import { Spin, List, Card, Tag, Typography, Flex } from "antd";
-import {
-  BookOutlined,
-  UserOutlined,
-  CalendarOutlined,
-} from "@ant-design/icons";
-import { AddBook, MainLayout } from "./_components";
+import { Spin, List, Typography, Flex, Card, Tag } from "antd";
+import { UserOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
-import { GET_BOOKS } from "./_graphql";
+import { GET_AUTHORS } from "../_graphql";
+import { AddAuthor, MainLayout } from "../_components";
 
 interface PaginationParams {
   page: number;
@@ -22,7 +18,7 @@ const HomePage: React.FC = () => {
     pageSize: 1,
   });
 
-  const { loading, error, data, refetch } = useQuery(GET_BOOKS, {
+  const { loading, error, data, refetch } = useQuery(GET_AUTHORS, {
     variables: pagination,
   });
 
@@ -47,7 +43,7 @@ const HomePage: React.FC = () => {
   return (
     <Flex vertical>
       <Flex justify="end" style={{ marginBottom: "16px" }}>
-        <AddBook onComplete={refetch} />
+        <AddAuthor onComplete={refetch} />
       </Flex>
       <List
         grid={{
@@ -59,39 +55,32 @@ const HomePage: React.FC = () => {
           xl: 4,
           xxl: 4,
         }}
-        dataSource={data?.books ?? []}
+        dataSource={data?.authors ?? []}
         pagination={{
           current: pagination.page,
           pageSize: pagination.pageSize,
-          total: data?.totalBooks ?? 0,
+          total: data?.totalAuthors ?? 0,
           onChange: handlePageChange,
           showSizeChanger: true,
-          showTotal: (total) => `Total ${total} books`,
+          showTotal: (total) => `Total ${total} authors`,
           pageSizeOptions: ["8", "16", "24", "32"],
           position: "bottom",
           align: "center",
         }}
-        renderItem={(book) => (
+        renderItem={(author) => (
           <List.Item>
             <Card
               hoverable
               title={
                 <Typography.Title level={4}>
-                  <BookOutlined style={{ marginRight: 8 }} />
-                  {book?.title}
+                  <UserOutlined style={{ marginRight: 8 }} />
+                  {author?.name}
                 </Typography.Title>
               }
             >
-              <Typography.Paragraph ellipsis={{ rows: 3 }}>
-                {book?.description}
-              </Typography.Paragraph>
-              <div style={{ marginBottom: 12 }}>
-                <UserOutlined style={{ marginRight: 8 }} />
-                <Typography.Text strong>{book?.author?.name}</Typography.Text>
-              </div>
               <div>
                 <CalendarOutlined style={{ marginRight: 8 }} />
-                <Tag color="blue">{book?.publishedDate}</Tag>
+                <Tag color="blue">{author?.bornDate}</Tag>
               </div>
             </Card>
           </List.Item>

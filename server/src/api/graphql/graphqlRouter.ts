@@ -2,39 +2,7 @@ import { ApolloServer, type ApolloServerOptions } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { authorService } from "./authorService";
 import { bookService } from "./bookService";
-
-const typeDefs = `#graphql
-  type Author {
-    id: String,
-    name: String,
-    biography: String
-    bornDate: String
-    books: [Book]
-    createdAt: String
-    updatedAt: String
-  }
-
-  type Book {
-    id: String,
-    title: String
-    description: String
-    publishedDate: String
-    authorId: String
-    author: Author
-    createdAt: String
-    updatedAt: String
-  }
-
-  type Query {
-    authors(page: Int, pageSize: Int, id: String): [Author]
-    books(page: Int, pageSize: Int, id: String): [Book]
-  }
-
-  type Mutation {
-    addAuthor(name: String, biography: String, bornDate: String): Author
-    addBook(title: String, description: String, publishedDate: String, authorId: String): Book
-  }
-`;
+import typeDefs from "./schema.graphql";
 
 const resolvers: ApolloServerOptions<any>["resolvers"] = {
   Query: {
@@ -58,6 +26,8 @@ const resolvers: ApolloServerOptions<any>["resolvers"] = {
         includeAuthor: allFields.includes("author"),
       });
     },
+    totalAuthors: () => authorService.getTotalCount(),
+    totalBooks: () => bookService.getTotalCount(),
   },
   Mutation: {
     addAuthor: async (_, params) => authorService.create(params),
