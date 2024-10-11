@@ -31,7 +31,7 @@ export const AddOrEditBook: React.FC<AddOrEditBookProps> = ({
     }
   );
 
-  const { data: authorsData } = useQuery(GET_AUTHORS, {
+  const { data: authorsData, refetch: refetchAuthors } = useQuery(GET_AUTHORS, {
     variables: {
       page: 1,
       pageSize: 10000,
@@ -73,6 +73,10 @@ export const AddOrEditBook: React.FC<AddOrEditBookProps> = ({
 
   const showModal = () => {
     formRef.current?.reset();
+    refetchAuthors({
+      page: 1,
+      pageSize: 10000,
+    });
     setOpen(true);
   };
 

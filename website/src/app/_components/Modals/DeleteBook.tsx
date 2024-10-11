@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Typography } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
-import { DELETE_BOOK, GET_BOOKS } from "@/app/_graphql";
+import { DELETE_BOOK, GET_BOOK_QUERY, GET_BOOKS } from "@/app/_graphql";
 
 export interface DeleteBookProps {
   id: string;
@@ -13,7 +13,7 @@ export const DeleteBook: React.FC<DeleteBookProps> = ({ onComplete, id }) => {
   const [open, setOpen] = useState(false);
 
   const [mutateFunction, { data, loading, error }] = useMutation(DELETE_BOOK, {
-    refetchQueries: [GET_BOOKS],
+    refetchQueries: [GET_BOOKS, GET_BOOK_QUERY],
   });
 
   const showModal = () => {

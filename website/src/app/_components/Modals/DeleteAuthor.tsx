@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Typography } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
-import { DELETE_AUTHOR, GET_AUTHORS } from "@/app/_graphql";
+import { DELETE_AUTHOR, GET_AUTHOR_QUERY, GET_AUTHORS } from "@/app/_graphql";
 
 export interface DeleteAuthorProps {
   id: string;
@@ -15,9 +15,12 @@ export const DeleteAuthor: React.FC<DeleteAuthorProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  const [mutateFunction, { data, loading, error }] = useMutation(DELETE_AUTHOR, {
-    refetchQueries: [GET_AUTHORS],
-  });
+  const [mutateFunction, { data, loading, error }] = useMutation(
+    DELETE_AUTHOR,
+    {
+      refetchQueries: [GET_AUTHORS, GET_AUTHOR_QUERY],
+    }
+  );
 
   const showModal = () => {
     setOpen(true);
