@@ -1,6 +1,15 @@
 "use client";
 
-import { List, Card, Tag, Typography, Flex, Button, Input } from "antd";
+import {
+  List,
+  Card,
+  Tag,
+  Typography,
+  Flex,
+  Button,
+  Input,
+  DatePicker,
+} from "antd";
 import {
   BookOutlined,
   UserOutlined,
@@ -17,6 +26,7 @@ import { PageError } from "./PageError";
 import { PageLoader } from "./PageLoader";
 import { formatDate } from "../_utils";
 import debounce from "lodash/debounce";
+import dayjs from "dayjs";
 
 interface PaginationParams {
   page: number;
@@ -35,26 +45,55 @@ export const BookList: React.FC<BookListProps> = ({ authorId, noBack }) => {
     pageSize: 1,
   });
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [fromDate, setFromDate] = useState<dayjs.Dayjs | undefined>();
+  const [toDate, setToDate] = useState<dayjs.Dayjs | undefined>();
+  const [filterQuery, setFilterQuery] = useState<{
+    title?: string;
+    fromPublishedDate?: string;
+    toPublishedDate?: string;
+  }>({});
 
   const { loading, error, data, refetch } = useQuery(GET_BOOKS, {
     variables: authorId
       ? {
           authorId,
+          ...filterQuery,
           ...pagination,
         }
-      : pagination,
+      : { ...pagination, ...filterQuery },
   });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    debouncedSearch(e.target.value);
+    debouncedSearch({ title: e.target.value, fromDate, toDate });
+  };
+
+  const handleFromDateChange = (date: dayjs.Dayjs | undefined) => {
+    setFromDate(date);
+    debouncedSearch({ title: searchTerm, fromDate: date, toDate });
+  };
+
+  const handleToDateChange = (date: dayjs.Dayjs | undefined) => {
+    setToDate(date);
+    debouncedSearch({ title: searchTerm, fromDate, toDate: date });
   };
 
   const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      refetch({ title: value, ...pagination, authorId });
-    }, 500),
-    [pagination, authorId]
+    debounce(
+      (params: {
+        title?: string;
+        fromDate?: dayjs.Dayjs;
+        toDate?: dayjs.Dayjs;
+      }) => {
+        setFilterQuery({
+          ...params,
+          fromPublishedDate: params.fromDate?.toISOString(),
+          toPublishedDate: params.toDate?.toISOString(),
+        });
+      },
+      500
+    ),
+    [setFilterQuery]
   );
 
   const handlePageChange = (page: number, pageSize: number) => {
@@ -102,7 +141,19 @@ export const BookList: React.FC<BookListProps> = ({ authorId, noBack }) => {
           prefix={<SearchOutlined />}
           value={searchTerm}
           onChange={handleSearch}
-          style={{ width: 300 }}
+          style={{ width: 300, marginRight: "4px" }}
+        />
+        <DatePicker
+          value={fromDate}
+          onChange={handleFromDateChange}
+          placeholder="Published From"
+          style={{ marginRight: "4px" }}
+        />
+        <DatePicker
+          value={toDate}
+          onChange={handleToDateChange}
+          placeholder="Published Till"
+          style={{ marginRight: "4px" }}
         />
       </Flex>
       <List

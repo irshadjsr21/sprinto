@@ -24,7 +24,10 @@ export class ServiceUtils {
     };
   }
 
-  public createPaginationQueryForMongo({ pageSize = 10, page = 1 }: IPaginationParams) {
+  public createPaginationQueryForMongo({
+    pageSize = 10,
+    page = 1,
+  }: IPaginationParams) {
     return {
       limit: pageSize,
       skip: (page - 1) * pageSize,
@@ -60,6 +63,37 @@ export class ServiceUtils {
       result[key] = {
         [Op.iLike]: `%${params[key]}%`,
       };
+    }
+
+    return result;
+  }
+
+  public createDateFilterQuery(
+    filterOptions: Record<string, { gte?: string; lte?: string }>
+  ) {
+    const params = structuredClone(filterOptions);
+
+    for (const key in params) {
+      if (params[key] === undefined || params[key] === null) {
+        delete params[key];
+      }
+    }
+
+    const result: Record<string, any> = {};
+
+    for (const key in params) {
+      if (!params[key].gte && !params[key].lte) {
+        continue;
+      }
+
+      result[key] = {};
+      if (params[key].gte) {
+        result[key][Op.gte] = new Date(params[key].gte);
+      }
+
+      if (params[key].lte) {
+        result[key][Op.lte] = new Date(params[key].lte);
+      }
     }
 
     return result;

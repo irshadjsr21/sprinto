@@ -1,11 +1,17 @@
 import { Author, Book, type IBook, type IBookCreation } from "../../common/db";
-import { type IFilterParams, type IPaginationParams, serviceUtils } from "./serviceUtils";
+import {
+  type IFilterParams,
+  type IPaginationParams,
+  serviceUtils,
+} from "./serviceUtils";
 
 export interface IFindAllBooksParams extends IPaginationParams, IFilterParams {
   id?: string;
   authorId?: string;
   includeAuthor?: boolean;
   title?: string;
+  fromPublishedDate?: string;
+  toPublishedDate?: string;
 }
 
 export class BookService {
@@ -18,6 +24,12 @@ export class BookService {
         }),
         ...serviceUtils.createFullTextSearchFilterQuery({
           title: params.title,
+        }),
+        ...serviceUtils.createDateFilterQuery({
+          publishedDate: {
+            gte: params.fromPublishedDate,
+            lte: params.toPublishedDate,
+          },
         }),
       },
       ...serviceUtils.createPaginationQuery(params),
@@ -38,25 +50,47 @@ export class BookService {
     return book;
   }
 
-  async getTotalCount(params?: { authorId?: string }): Promise<number> {
+  async getTotalCount(params: {
+    authorId?: string;
+    title?: string;
+    fromPublishedDate?: string;
+    toPublishedDate?: string;
+  }): Promise<number> {
+    const query = {
+      ...serviceUtils.createFullTextSearchFilterQuery({
+        title: params.title,
+      }),
+      ...serviceUtils.createDateFilterQuery({
+        publishedDate: {
+          gte: params.fromPublishedDate,
+          lte: params.toPublishedDate,
+        },
+      }),
+    };
     return Book.count({
-      where: params?.authorId
+      where: params.authorId
         ? {
             authorId: params.authorId,
+            ...query,
           }
-        : {},
+        : query,
     });
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<string> {
     await Book.destroy({
       where: {
         id,
       },
     });
+
+    return id;
   }
 
-  async update(id: string, bookDetails: Partial<IBookCreation>): Promise<IBook> {
+  async update(
+    id: string,
+    bookDetails: Partial<IBookCreation>
+  ): Promise<IBook> {
     const books = await Book.update(bookDetails, {
       where: {
         id,

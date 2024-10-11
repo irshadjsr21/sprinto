@@ -30,7 +30,7 @@ const resolvers: ApolloServerOptions<any>["resolvers"] = {
     reviews: async (_, params) => {
       return reviewService.findAll(params);
     },
-    totalAuthors: () => authorService.getTotalCount(),
+    totalAuthors: (_, params) => authorService.getTotalCount(params),
     totalBooks: (_, params) => bookService.getTotalCount(params),
     totalReviews: (_, params) => reviewService.getTotalCount(params.bookId),
   },

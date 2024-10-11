@@ -1,6 +1,15 @@
 "use client";
 
-import { List, Typography, Flex, Card, Tag, Button, Input } from "antd";
+import {
+  List,
+  Typography,
+  Flex,
+  Card,
+  Tag,
+  Button,
+  Input,
+  DatePicker,
+} from "antd";
 import {
   UserOutlined,
   CalendarOutlined,
@@ -14,6 +23,7 @@ import { AddOrEditAuthor, PageError, PageLoader } from "../_components";
 import { formatDate } from "../_utils";
 import { useRouter } from "next/navigation";
 import debounce from "lodash/debounce";
+import dayjs from "dayjs";
 
 interface PaginationParams {
   page: number;
@@ -27,9 +37,19 @@ export const AuthorList: React.FC = () => {
     pageSize: 1,
   });
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [fromDate, setFromDate] = useState<dayjs.Dayjs | undefined>();
+  const [toDate, setToDate] = useState<dayjs.Dayjs | undefined>();
+  const [filterQuery, setFilterQuery] = useState<{
+    name?: string;
+    fromBornDate?: string;
+    toBornDate?: string;
+  }>({});
 
   const { loading, error, data, refetch } = useQuery(GET_AUTHORS, {
-    variables: pagination,
+    variables: {
+      ...pagination,
+      ...filterQuery,
+    },
   });
 
   const handlePageChange = (page: number, pageSize: number) => {
@@ -47,14 +67,35 @@ export const AuthorList: React.FC = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    debouncedSearch(e.target.value);
+    debouncedSearch({ name: e.target.value, fromDate, toDate });
+  };
+
+  const handleFromDateChange = (date: dayjs.Dayjs | undefined) => {
+    setFromDate(date);
+    debouncedSearch({ name: searchTerm, fromDate: date, toDate });
+  };
+
+  const handleToDateChange = (date: dayjs.Dayjs | undefined) => {
+    setToDate(date);
+    debouncedSearch({ name: searchTerm, fromDate, toDate: date });
   };
 
   const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      refetch({ name: value, ...pagination });
-    }, 500),
-    [pagination]
+    debounce(
+      (params: {
+        name?: string;
+        fromDate?: dayjs.Dayjs;
+        toDate?: dayjs.Dayjs;
+      }) => {
+        setFilterQuery({
+          ...params,
+          fromBornDate: params.fromDate?.toISOString(),
+          toBornDate: params.toDate?.toISOString(),
+        });
+      },
+      500
+    ),
+    [setFilterQuery]
   );
 
   if (loading) return <PageLoader />;
@@ -81,7 +122,19 @@ export const AuthorList: React.FC = () => {
           prefix={<SearchOutlined />}
           value={searchTerm}
           onChange={handleSearch}
-          style={{ width: 300 }}
+          style={{ width: 300, marginRight: "4px" }}
+        />
+        <DatePicker
+          value={fromDate}
+          onChange={handleFromDateChange}
+          placeholder="Born From"
+          style={{ marginRight: "4px" }}
+        />
+        <DatePicker
+          value={toDate}
+          onChange={handleToDateChange}
+          placeholder="Born Till"
+          style={{ marginRight: "4px" }}
         />
       </Flex>
       <List

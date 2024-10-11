@@ -1,8 +1,8 @@
 import { gql } from "@/__generated__";
 
 export const GET_BOOKS = gql(`
-  query GetBooks($page: Int, $pageSize: Int, $authorId: String, $title: String) {
-    books(page: $page, pageSize: $pageSize, authorId: $authorId, title: $title) {
+  query GetBooks($page: Int, $pageSize: Int, $authorId: String, $title: String, $fromPublishedDate: String, $toPublishedDate: String) {
+    books(page: $page, pageSize: $pageSize, authorId: $authorId, title: $title, fromPublishedDate: $fromPublishedDate, toPublishedDate: $toPublishedDate) {
       id
       title
       description
@@ -12,7 +12,7 @@ export const GET_BOOKS = gql(`
         name
       }
     }
-    totalBooks(authorId: $authorId)
+    totalBooks(authorId: $authorId, title: $title, fromPublishedDate: $fromPublishedDate, toPublishedDate: $toPublishedDate)
   }
 `);
 
@@ -34,9 +34,7 @@ export const UPDATE_BOOK = gql(`
 
 export const DELETE_BOOK = gql(`
   mutation DeleteBook($id: String!) {
-    deleteBook(id: $id) {
-      id
-    }
+    deleteBook(id: $id)
   }
 `);
 

@@ -1,10 +1,21 @@
-import { Author, Book, type IAuthor, type IAuthorCreation, sequelize } from "../../common/db";
-import { type IFilterParams, type IPaginationParams, serviceUtils } from "./serviceUtils";
+import {
+  Author,
+  Book,
+  type IAuthor,
+  type IAuthorCreation,
+} from "../../common/db";
+import {
+  type IFilterParams,
+  type IPaginationParams,
+  serviceUtils,
+} from "./serviceUtils";
 
 export interface IFindAllAuthorParams extends IPaginationParams, IFilterParams {
   includeBooks?: boolean;
   id?: string;
   name?: string;
+  fromBornDate?: string;
+  toBornDate?: string;
 }
 
 export class AuthorService {
@@ -14,6 +25,12 @@ export class AuthorService {
         ...serviceUtils.createFilterQuery({ id: params.id }),
         ...serviceUtils.createFullTextSearchFilterQuery({
           name: params.name,
+        }),
+        ...serviceUtils.createDateFilterQuery({
+          bornDate: {
+            gte: params.fromBornDate,
+            lte: params.toBornDate,
+          },
         }),
       },
       ...serviceUtils.createPaginationQuery(params),
@@ -35,19 +52,39 @@ export class AuthorService {
     return author;
   }
 
-  async getTotalCount(): Promise<number> {
-    return Author.count();
+  async getTotalCount(params: {
+    name?: string;
+    fromBornDate?: string;
+    toBornDate?: string;
+  }): Promise<number> {
+    return Author.count({
+      where: {
+        ...serviceUtils.createFullTextSearchFilterQuery({
+          name: params.name,
+        }),
+        ...serviceUtils.createDateFilterQuery({
+          bornDate: {
+            gte: params.fromBornDate,
+            lte: params.toBornDate,
+          },
+        }),
+      },
+    });
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<string> {
     await Author.destroy({
       where: {
         id,
       },
     });
+    return id;
   }
 
-  async update(id: string, authorDetails: Partial<IAuthorCreation>): Promise<IAuthor> {
+  async update(
+    id: string,
+    authorDetails: Partial<IAuthorCreation>
+  ): Promise<IAuthor> {
     const authors = await Author.update(authorDetails, {
       where: {
         id,

@@ -14,15 +14,15 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 const documents = {
-    "\n  query GetAuthors($page: Int, $pageSize: Int, $name: String) {\n    authors(page: $page, pageSize: $pageSize, name: $name) {\n      id\n      name\n      bornDate\n    }\n    totalAuthors\n  }\n": types.GetAuthorsDocument,
+    "\n  query GetAuthors($page: Int, $pageSize: Int, $name: String, $fromBornDate: String, $toBornDate: String) {\n    authors(page: $page, pageSize: $pageSize, name: $name, fromBornDate: $fromBornDate, toBornDate: $toBornDate) {\n      id\n      name\n      bornDate\n    }\n    totalAuthors(name: $name, fromBornDate: $fromBornDate, toBornDate: $toBornDate)\n  }\n": types.GetAuthorsDocument,
     "\n  mutation AddAuthor($name: String!, $biography: String, $bornDate: String) {\n    addAuthor(name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n    }\n  }\n": types.AddAuthorDocument,
     "\n  mutation UpdateAuthor($id: String!, $name: String, $biography: String, $bornDate: String) {\n    updateAuthor(id: $id, name: $name, biography: $biography, bornDate: $bornDate) {\n      id\n    }\n  }\n": types.UpdateAuthorDocument,
-    "\n  mutation DeleteAuthor($id: String!) {\n    deleteAuthor(id: $id) {\n      id\n    }\n  }\n": types.DeleteAuthorDocument,
+    "\n  mutation DeleteAuthor($id: String!) {\n    deleteAuthor(id: $id) \n  }\n": types.DeleteAuthorDocument,
     "\n  query GetAuthor($id: String!) {\n    authors(id: $id) {\n      id\n      name\n      biography\n      bornDate\n    }\n  }\n": types.GetAuthorDocument,
-    "\n  query GetBooks($page: Int, $pageSize: Int, $authorId: String, $title: String) {\n    books(page: $page, pageSize: $pageSize, authorId: $authorId, title: $title) {\n      id\n      title\n      description\n      publishedDate\n      author {\n        id\n        name\n      }\n    }\n    totalBooks(authorId: $authorId)\n  }\n": types.GetBooksDocument,
+    "\n  query GetBooks($page: Int, $pageSize: Int, $authorId: String, $title: String, $fromPublishedDate: String, $toPublishedDate: String) {\n    books(page: $page, pageSize: $pageSize, authorId: $authorId, title: $title, fromPublishedDate: $fromPublishedDate, toPublishedDate: $toPublishedDate) {\n      id\n      title\n      description\n      publishedDate\n      author {\n        id\n        name\n      }\n    }\n    totalBooks(authorId: $authorId, title: $title, fromPublishedDate: $fromPublishedDate, toPublishedDate: $toPublishedDate)\n  }\n": types.GetBooksDocument,
     "\n  mutation AddBook($title: String!, $description: String, $publishedDate: String, $authorId: String) {\n    addBook(title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n    }\n  }\n": types.AddBookDocument,
     "\n  mutation UpdateBook($id: String!, $title: String, $description: String, $publishedDate: String, $authorId: String) {\n    updateBook(id: $id, title: $title, description: $description, publishedDate: $publishedDate, authorId: $authorId) {\n      id\n    }\n  }\n": types.UpdateBookDocument,
-    "\n  mutation DeleteBook($id: String!) {\n    deleteBook(id: $id) {\n      id\n    }\n  }\n": types.DeleteBookDocument,
+    "\n  mutation DeleteBook($id: String!) {\n    deleteBook(id: $id)\n  }\n": types.DeleteBookDocument,
     "\n  query GetBook($id: String!) {\n    books(id: $id) {\n      id\n      title\n      description\n      publishedDate\n      authorId\n      rating\n      author {\n        id\n        name\n        biography\n        bornDate\n      }\n    }\n  }\n": types.GetBookDocument,
     "\n  query GetReviews($page: Int, $pageSize: Int, $bookId: String!) {\n    reviews(bookId: $bookId, page: $page, pageSize: $pageSize) {\n      id\n      comment\n      rating\n      createdAt\n    }\n    totalReviews(bookId: $bookId)\n  }\n": types.GetReviewsDocument,
     "\n  mutation AddReview($bookId: String!, $comment: String!, $rating: Int!) {\n    addReview(bookId: $bookId, comment: $comment, rating: $rating) {\n      id\n    }\n  }\n": types.AddReviewDocument,
@@ -45,7 +45,7 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetAuthors($page: Int, $pageSize: Int, $name: String) {\n    authors(page: $page, pageSize: $pageSize, name: $name) {\n      id\n      name\n      bornDate\n    }\n    totalAuthors\n  }\n"): (typeof documents)["\n  query GetAuthors($page: Int, $pageSize: Int, $name: String) {\n    authors(page: $page, pageSize: $pageSize, name: $name) {\n      id\n      name\n      bornDate\n    }\n    totalAuthors\n  }\n"];
+export function gql(source: "\n  query GetAuthors($page: Int, $pageSize: Int, $name: String, $fromBornDate: String, $toBornDate: String) {\n    authors(page: $page, pageSize: $pageSize, name: $name, fromBornDate: $fromBornDate, toBornDate: $toBornDate) {\n      id\n      name\n      bornDate\n    }\n    totalAuthors(name: $name, fromBornDate: $fromBornDate, toBornDate: $toBornDate)\n  }\n"): (typeof documents)["\n  query GetAuthors($page: Int, $pageSize: Int, $name: String, $fromBornDate: String, $toBornDate: String) {\n    authors(page: $page, pageSize: $pageSize, name: $name, fromBornDate: $fromBornDate, toBornDate: $toBornDate) {\n      id\n      name\n      bornDate\n    }\n    totalAuthors(name: $name, fromBornDate: $fromBornDate, toBornDate: $toBornDate)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -57,7 +57,7 @@ export function gql(source: "\n  mutation UpdateAuthor($id: String!, $name: Stri
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation DeleteAuthor($id: String!) {\n    deleteAuthor(id: $id) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteAuthor($id: String!) {\n    deleteAuthor(id: $id) {\n      id\n    }\n  }\n"];
+export function gql(source: "\n  mutation DeleteAuthor($id: String!) {\n    deleteAuthor(id: $id) \n  }\n"): (typeof documents)["\n  mutation DeleteAuthor($id: String!) {\n    deleteAuthor(id: $id) \n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -65,7 +65,7 @@ export function gql(source: "\n  query GetAuthor($id: String!) {\n    authors(id
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetBooks($page: Int, $pageSize: Int, $authorId: String, $title: String) {\n    books(page: $page, pageSize: $pageSize, authorId: $authorId, title: $title) {\n      id\n      title\n      description\n      publishedDate\n      author {\n        id\n        name\n      }\n    }\n    totalBooks(authorId: $authorId)\n  }\n"): (typeof documents)["\n  query GetBooks($page: Int, $pageSize: Int, $authorId: String, $title: String) {\n    books(page: $page, pageSize: $pageSize, authorId: $authorId, title: $title) {\n      id\n      title\n      description\n      publishedDate\n      author {\n        id\n        name\n      }\n    }\n    totalBooks(authorId: $authorId)\n  }\n"];
+export function gql(source: "\n  query GetBooks($page: Int, $pageSize: Int, $authorId: String, $title: String, $fromPublishedDate: String, $toPublishedDate: String) {\n    books(page: $page, pageSize: $pageSize, authorId: $authorId, title: $title, fromPublishedDate: $fromPublishedDate, toPublishedDate: $toPublishedDate) {\n      id\n      title\n      description\n      publishedDate\n      author {\n        id\n        name\n      }\n    }\n    totalBooks(authorId: $authorId, title: $title, fromPublishedDate: $fromPublishedDate, toPublishedDate: $toPublishedDate)\n  }\n"): (typeof documents)["\n  query GetBooks($page: Int, $pageSize: Int, $authorId: String, $title: String, $fromPublishedDate: String, $toPublishedDate: String) {\n    books(page: $page, pageSize: $pageSize, authorId: $authorId, title: $title, fromPublishedDate: $fromPublishedDate, toPublishedDate: $toPublishedDate) {\n      id\n      title\n      description\n      publishedDate\n      author {\n        id\n        name\n      }\n    }\n    totalBooks(authorId: $authorId, title: $title, fromPublishedDate: $fromPublishedDate, toPublishedDate: $toPublishedDate)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -77,7 +77,7 @@ export function gql(source: "\n  mutation UpdateBook($id: String!, $title: Strin
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation DeleteBook($id: String!) {\n    deleteBook(id: $id) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteBook($id: String!) {\n    deleteBook(id: $id) {\n      id\n    }\n  }\n"];
+export function gql(source: "\n  mutation DeleteBook($id: String!) {\n    deleteBook(id: $id)\n  }\n"): (typeof documents)["\n  mutation DeleteBook($id: String!) {\n    deleteBook(id: $id)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

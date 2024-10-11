@@ -38,10 +38,11 @@ export class ReviewService {
     return Review.countDocuments({ bookId });
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<string> {
     await Review.deleteOne({
       _id: id,
     });
+    return id;
   }
 
   async update(id: string, reviewDetails: Partial<IReview>): Promise<IReview> {

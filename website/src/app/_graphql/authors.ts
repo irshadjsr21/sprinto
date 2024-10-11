@@ -1,13 +1,13 @@
 import { gql } from "@/__generated__";
 
 export const GET_AUTHORS = gql(`
-  query GetAuthors($page: Int, $pageSize: Int, $name: String) {
-    authors(page: $page, pageSize: $pageSize, name: $name) {
+  query GetAuthors($page: Int, $pageSize: Int, $name: String, $fromBornDate: String, $toBornDate: String) {
+    authors(page: $page, pageSize: $pageSize, name: $name, fromBornDate: $fromBornDate, toBornDate: $toBornDate) {
       id
       name
       bornDate
     }
-    totalAuthors
+    totalAuthors(name: $name, fromBornDate: $fromBornDate, toBornDate: $toBornDate)
   }
 `);
 
@@ -29,9 +29,7 @@ export const UPDATE_AUTHOR = gql(`
 
 export const DELETE_AUTHOR = gql(`
   mutation DeleteAuthor($id: String!) {
-    deleteAuthor(id: $id) {
-      id
-    }
+    deleteAuthor(id: $id) 
   }
 `);
 
