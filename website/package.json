@@ -1,0 +1,36 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run generate && next dev",
+    "build": "npm run generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "generate": "graphql-codegen"
+  },
+  "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.1",
+    "@apollo/client": "^3.11.8",
+    "antd": "^5.21.2",
+    "date-fns": "^4.1.0",
+    "lodash": "^4.17.21",
+    "next": "14.2.14",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.3",
+    "@graphql-codegen/client-preset": "^4.4.0",
+    "@graphql-typed-document-node/core": "^3.2.0",
+    "@types/lodash": "^4.17.10",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "dotenv": "^16.4.5",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.14",
+    "graphql": "^16.9.0",
+    "typescript": "^5"
+  }
+}
